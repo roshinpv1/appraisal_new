@@ -164,10 +164,10 @@ Example category description:
 ### Self-Assessment Integration
 
 - **Toggle Option**: Enable/disable employee self-assessment
-- **Self-Scoring**: Employees rate themselves on the same scale
-- **Detailed Input**: Include achievements, challenges, and goals
+- **Simple Text Input**: Single text area for employee's thoughts and reflections
+- **Flexible Format**: Employees can share their perspective in their own words
 - **Balanced Feedback**: AI considers both manager and employee perspectives
-- **Gap Analysis**: Addresses alignment or gaps between perspectives
+- **Personal Reflection**: Employees can include achievements, challenges, and goals
 
 ## LLM Integration
 

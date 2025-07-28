@@ -12,12 +12,7 @@ export interface AppraisalRating {
 }
 
 export interface EmployeeSelfAssessment {
-  categoryId: string;
-  selfScore: number; // 0-5 with decimal fractions
-  selfComments: string;
-  achievements: string; // What they think they did well
-  challenges: string; // What they found challenging
-  goals: string; // Their goals for next period
+  selfAssessment: string; // Single text input for employee's self-assessment
 }
 
 export interface AppraisalTemplate {

@@ -54,7 +54,7 @@ export default function AppraisalPage() {
   const [reviewerName, setReviewerName] = useState('')
   const [employeeGender, setEmployeeGender] = useState<'male' | 'female' | 'other' | 'prefer-not-to-say'>('prefer-not-to-say')
   const [ratings, setRatings] = useState<AppraisalRating[]>([])
-  const [selfAssessment, setSelfAssessment] = useState<EmployeeSelfAssessment[]>([])
+  const [selfAssessment, setSelfAssessment] = useState<string>('')
   const [overallScore, setOverallScore] = useState(0)
   const [generatedFeedback, setGeneratedFeedback] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
@@ -69,17 +69,20 @@ export default function AppraisalPage() {
       comments: ''
     }))
     setRatings(initialRatings)
-    
-    const initialSelfAssessment: EmployeeSelfAssessment[] = template.categories.map(category => ({
-      categoryId: category.id,
-      selfScore: 0,
-      selfComments: '',
-      achievements: '',
-      challenges: '',
-      goals: ''
-    }))
-    setSelfAssessment(initialSelfAssessment)
   }, [template])
+
+  // Update overall score when ratings change
+  useEffect(() => {
+    if (ratings.length > 0) {
+      const totalWeight = template.categories.reduce((sum, category) => sum + category.weight, 0)
+      const weightedSum = ratings.reduce((sum, rating) => {
+        const category = template.categories.find(c => c.id === rating.categoryId)
+        return sum + (rating.score * (category?.weight || 1))
+      }, 0)
+      const average = totalWeight > 0 ? weightedSum / totalWeight : 0
+      setOverallScore(average)
+    }
+  }, [ratings, template])
 
   // Update rating for a category
   const updateRating = (categoryId: string, score: number, comments: string) => {
@@ -87,15 +90,6 @@ export default function AppraisalPage() {
       rating.categoryId === categoryId 
         ? { ...rating, score, comments }
         : rating
-    ))
-  }
-
-  // Update self-assessment for a category
-  const updateSelfAssessment = (categoryId: string, field: keyof EmployeeSelfAssessment, value: string | number) => {
-    setSelfAssessment(prev => prev.map(assessment => 
-      assessment.categoryId === categoryId 
-        ? { ...assessment, [field]: value }
-        : assessment
     ))
   }
 
@@ -126,12 +120,10 @@ export default function AppraisalPage() {
 
   // Generate feedback using LLM
   const generateFeedback = async () => {
-    if (!employeeName || !reviewerName) {
-      alert('Please fill in employee name and reviewer name')
+    if (!employeeName || !employeeId || !reviewerName) {
+      alert('Please fill in all required fields')
       return
     }
-
-    setIsGenerating(true)
 
     try {
       const response = await fetch('/api/generate-feedback', {
@@ -151,18 +143,15 @@ export default function AppraisalPage() {
         }),
       })
 
-      const result: LLMResponse = await response.json()
-      
-      if (result.success) {
-        setGeneratedFeedback(result.feedback)
+      const data = await response.json()
+      if (data.success) {
+        setGeneratedFeedback(data.feedback)
       } else {
-        alert(`Error generating feedback: ${result.error}`)
+        alert('Error generating feedback: ' + (data.error || 'Unknown error'))
       }
     } catch (error) {
-      console.error('Error generating feedback:', error)
-      alert('Failed to generate feedback. Please try again.')
-    } finally {
-      setIsGenerating(false)
+      console.error('Error:', error)
+      alert('Error generating feedback')
     }
   }
 
@@ -189,7 +178,6 @@ export default function AppraisalPage() {
     }))
     
     setRatings(prev => prev.filter(r => r.categoryId !== categoryId))
-    setSelfAssessment(prev => prev.filter(s => s.categoryId !== categoryId))
   }
 
   // Update category
@@ -433,6 +421,34 @@ export default function AppraisalPage() {
               </CardContent>
             </Card>
 
+            {/* Employee Self-Assessment */}
+            {includeSelfAssessment && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center">
+                    <User className="w-5 h-5 mr-2" />
+                    Employee Self-Assessment
+                  </CardTitle>
+                  <CardDescription>
+                    Employee's self-evaluation and thoughts about their performance
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Self-Assessment
+                    </label>
+                    <Textarea
+                      value={selfAssessment}
+                      onChange={(e) => setSelfAssessment(e.target.value)}
+                      placeholder="Please share your thoughts about your performance, achievements, challenges, and goals for the next period..."
+                      className="min-h-[120px]"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Manager Ratings */}
             <Card>
               <CardHeader>
@@ -501,112 +517,6 @@ export default function AppraisalPage() {
                 })}
               </CardContent>
             </Card>
-
-            {/* Employee Self-Assessment */}
-            {includeSelfAssessment && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <User className="w-5 h-5 mr-2" />
-                    Employee Self-Assessment
-                  </CardTitle>
-                  <CardDescription>
-                    Employee's self-evaluation for each category based on the defined criteria
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {template.categories.map((category) => {
-                    const assessment = selfAssessment.find(s => s.categoryId === category.id)
-                    if (!assessment) return null
-
-                    return (
-                      <div key={category.id} className="border rounded-lg p-4 space-y-4">
-                        <div>
-                          <h4 className="font-semibold text-lg">{category.name}</h4>
-                          <p className="text-sm text-gray-600 mt-1">{category.description}</p>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <div className="flex items-center justify-between">
-                            <label className="text-sm font-medium text-gray-700">
-                              Self Score: {assessment.selfScore.toFixed(1)}/5
-                            </label>
-                          </div>
-                          
-                          <Slider
-                            value={[assessment.selfScore]}
-                            onValueChange={(value) => {
-                              const newScore = value[0]
-                              updateSelfAssessment(category.id, 'selfScore', newScore)
-                            }}
-                            max={5}
-                            min={0}
-                            step={0.1}
-                            className="w-full"
-                          />
-                          
-                          <div className="flex space-x-2 text-xs text-gray-500">
-                            <span>Poor</span>
-                            <span className="flex-1"></span>
-                            <span>Excellent</span>
-                          </div>
-                        </div>
-                        
-                        <div className="space-y-3">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Self Comments
-                            </label>
-                            <Textarea
-                              value={assessment.selfComments}
-                              onChange={(e) => updateSelfAssessment(category.id, 'selfComments', e.target.value)}
-                              placeholder={`Your thoughts on your ${category.name.toLowerCase()} performance based on: ${category.description}`}
-                              className="min-h-[60px]"
-                            />
-                          </div>
-                          
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Key Achievements
-                            </label>
-                            <Textarea
-                              value={assessment.achievements}
-                              onChange={(e) => updateSelfAssessment(category.id, 'achievements', e.target.value)}
-                              placeholder={`What you think you did well in ${category.name.toLowerCase()} based on: ${category.description}`}
-                              className="min-h-[60px]"
-                            />
-                          </div>
-                          
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Challenges Faced
-                            </label>
-                            <Textarea
-                              value={assessment.challenges}
-                              onChange={(e) => updateSelfAssessment(category.id, 'challenges', e.target.value)}
-                              placeholder={`What you found challenging in ${category.name.toLowerCase()} based on: ${category.description}`}
-                              className="min-h-[60px]"
-                            />
-                          </div>
-                          
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Goals for Next Period
-                            </label>
-                            <Textarea
-                              value={assessment.goals}
-                              onChange={(e) => updateSelfAssessment(category.id, 'goals', e.target.value)}
-                              placeholder={`Your goals for improving ${category.name.toLowerCase()} based on: ${category.description}`}
-                              className="min-h-[60px]"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </CardContent>
-              </Card>
-            )}
 
             {/* Overall Score */}
             <Card>

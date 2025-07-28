@@ -51,15 +51,7 @@ function createFeedbackPrompt(data: AppraisalData): string {
 
   let selfAssessmentDetails = ''
   if (data.selfAssessment && data.selfAssessment.length > 0) {
-    selfAssessmentDetails = '\n\nEmployee Self-Assessment:\n' + data.selfAssessment.map(assessment => {
-      const category = data.template.categories.find(c => c.id === assessment.categoryId)
-      return `${category?.name} (${category?.description}):
-- Self Score: ${assessment.selfScore}/5
-- Self Comments: ${assessment.selfComments}
-- Key Achievements: ${assessment.achievements}
-- Challenges Faced: ${assessment.challenges}
-- Goals for Next Period: ${assessment.goals}`
-    }).join('\n\n')
+    selfAssessmentDetails = '\n\nEmployee Self-Assessment:\n' + data.selfAssessment
   }
 
   const categoryDescriptions = data.template.categories.map(category => 
@@ -108,15 +100,7 @@ function generateMockFeedback(data: AppraisalData): string {
 
   let selfAssessmentDetails = ''
   if (data.selfAssessment && data.selfAssessment.length > 0) {
-    selfAssessmentDetails = '\n\nEmployee Self-Assessment:\n' + data.selfAssessment.map(assessment => {
-      const category = data.template.categories.find(c => c.id === assessment.categoryId)
-      return `${category?.name} (${category?.description}):
-- Self Score: ${assessment.selfScore}/5
-- Self Comments: ${assessment.selfComments}
-- Key Achievements: ${assessment.achievements}
-- Challenges Faced: ${assessment.challenges}
-- Goals for Next Period: ${assessment.goals}`
-    }).join('\n\n')
+    selfAssessmentDetails = '\n\nEmployee Self-Assessment:\n' + data.selfAssessment
   }
 
   const overallScore = data.overallScore
