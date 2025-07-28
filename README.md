@@ -11,12 +11,14 @@ A comprehensive Next.js application for generating professional appraisal feedba
 - **Structured Feedback**: Organized under four clear categories for better clarity and actionability
 - **Slider-based Ratings**: Rate each category on a 0-5 scale with decimal precision
 - **Detailed Comments**: Add specific comments for each evaluation category
+- **Additional Manager Comments**: Include general observations and context across all categories
 - **Employee Self-Assessment**: Include employee's perspective with self-scoring and detailed input fields
 - **Weighted Scoring**: Automatic calculation of overall performance score
 - **AI-Powered Feedback**: Generate comprehensive, professional feedback using LLM integration
 - **Contextual Feedback**: AI considers category descriptions to provide more specific and relevant feedback
 - **Personalized Pronouns**: Uses appropriate he/him, she/her, or they/them pronouns based on gender selection
 - **Humanized Communication**: Feedback sounds natural and caring, avoiding corporate jargon
+- **Third-Person Language**: Formal performance review format using third-person pronouns throughout
 - **Export Options**: Copy to clipboard or download feedback as text file
 - **Modern UI**: Beautiful, responsive interface built with Tailwind CSS and Radix UI
 
@@ -102,6 +104,17 @@ The system generates feedback that feels warm, personal, and genuinely caring:
 
 The feedback is designed to feel like it comes from someone who truly knows and values the employee, focusing on their potential and growth rather than just metrics. It starts directly with observations and feedback, avoiding generic opening statements.
 
+### Third-Person Language
+
+The system generates feedback in formal third-person language, making it suitable for official performance review documents:
+
+- **Professional Format**: Uses "he/she/they" instead of "you" throughout
+- **Formal Tone**: Appropriate for official performance review documentation
+- **Gender-Aware**: Automatically uses appropriate pronouns based on employee gender selection
+- **Consistent Style**: Maintains professional third-person language across all sections
+
+This ensures the feedback is suitable for formal HR documentation and performance review records.
+
 ### Structured Feedback Categories
 
 The system organizes feedback under four clear categories for better clarity and actionability:
@@ -160,6 +173,19 @@ Example category description:
 - **Real-time Calculation**: Overall score updates automatically
 - **Performance Levels**: Automatic classification (Outstanding, Excellent, Good, etc.)
 - **Contextual Comments**: Placeholder text guides users based on category descriptions
+- **Additional Comments**: General manager observations that apply across all categories
+
+### Additional Manager Comments
+
+The system includes a dedicated section for additional manager comments that apply across all evaluation categories:
+
+- **Cross-Category Context**: General observations that don't fit into specific categories
+- **Overall Impressions**: Manager's broader perspective on the employee's performance
+- **Team Impact**: Comments about the employee's contribution to team success
+- **Future Potential**: Observations about growth trajectory and career development
+- **AI Integration**: These comments are considered when generating comprehensive feedback
+
+This allows managers to provide additional context that enhances the overall feedback quality and comprehensiveness.
 
 ### Self-Assessment Integration
 

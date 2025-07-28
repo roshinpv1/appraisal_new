@@ -31,6 +31,7 @@ export interface AppraisalData {
   template: AppraisalTemplate;
   ratings: AppraisalRating[];
   selfAssessment?: EmployeeSelfAssessment[]; // Optional self-assessment
+  additionalManagerComments?: string; // Additional manager comments across all categories
   overallScore: number;
   generatedFeedback: string;
 }

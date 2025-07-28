@@ -60,6 +60,7 @@ export default function AppraisalPage() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [includeSelfAssessment, setIncludeSelfAssessment] = useState(false)
   const [showTemplateEditor, setShowTemplateEditor] = useState(false)
+  const [additionalManagerComments, setAdditionalManagerComments] = useState<string>('')
 
   // Initialize ratings when template changes
   useEffect(() => {
@@ -139,6 +140,7 @@ export default function AppraisalPage() {
           template,
           ratings,
           selfAssessment: includeSelfAssessment ? selfAssessment : undefined,
+          additionalManagerComments,
           overallScore
         }),
       })
@@ -515,6 +517,24 @@ export default function AppraisalPage() {
                     </div>
                   )
                 })}
+                
+                {/* Additional Manager Comments */}
+                <div className="border-t pt-6 mt-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Additional Manager Comments
+                    </label>
+                    <Textarea
+                      value={additionalManagerComments}
+                      onChange={(e) => setAdditionalManagerComments(e.target.value)}
+                      placeholder="Add any additional comments, observations, or context that should be considered across all categories in the feedback generation..."
+                      className="min-h-[100px]"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      These comments will be considered when generating comprehensive feedback across all categories
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
 

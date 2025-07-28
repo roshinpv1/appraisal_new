@@ -54,6 +54,11 @@ function createFeedbackPrompt(data: AppraisalData): string {
     selfAssessmentDetails = '\n\nEmployee Self-Assessment:\n' + data.selfAssessment
   }
 
+  let additionalComments = ''
+  if (data.additionalManagerComments && data.additionalManagerComments.trim()) {
+    additionalComments = '\n\nAdditional Manager Comments:\n' + data.additionalManagerComments
+  }
+
   const categoryDescriptions = data.template.categories.map(category => 
     `• ${category.name}: ${category.description}`
   ).join('\n')
@@ -78,18 +83,22 @@ Evaluation Categories:
 ${categoryDescriptions}
 
 Manager's Assessment:
-${categoryDetails}${selfAssessmentDetails}
+${categoryDetails}${selfAssessmentDetails}${additionalComments}
 
-Please write a natural, conversational performance review organized under these four sections:
+CRITICAL INSTRUCTION: Write this performance review in THIRD PERSON ONLY. Never use "you" or "your". Always refer to the employee as "${pronouns.subject}", "${pronouns.object}", or "${pronouns.possessive}". This is a formal performance review document, not a direct conversation.
 
-1. **Success & Achievements** - Highlight their key accomplishments, strengths, and what they've done exceptionally well
-2. **Areas for Focus** - Identify specific areas where they can grow and improve, with actionable suggestions
+Please write a natural, professional performance review organized under these four sections:
+
+1. **Success & Achievements** - Highlight ${pronouns.possessive} key accomplishments, strengths, and what ${pronouns.subject} has done exceptionally well
+2. **Areas for Focus** - Identify specific areas where ${pronouns.subject} can grow and improve, with actionable suggestions
 3. **Risk Overlay** - Address any potential challenges, concerns, or areas that need immediate attention
 4. **Overall Summary** - Provide a balanced conclusion with encouragement and next steps
 
-Write as if you're having a caring conversation with someone you genuinely want to see succeed. Use natural transitions, avoid corporate jargon, and make it feel like a real human wrote this with care and attention.
+Write as if you're writing about someone you genuinely want to see succeed. Use natural transitions, avoid corporate jargon, and make it feel like a real human wrote this with care and attention.
 
-Focus on the person, not just the metrics. Show that you see their potential and believe in their growth. Start directly with your observations and feedback - no generic greetings or formalities.`
+Focus on the person, not just the metrics. Show that you see ${pronouns.possessive} potential and believe in ${pronouns.possessive} growth. Start directly with your observations and feedback - no generic greetings or formalities.
+
+REMEMBER: Use third-person language throughout. Refer to the employee as "${pronouns.subject}" not "you". This is a formal performance review document.`
 }
 
 function generateMockFeedback(data: AppraisalData): string {
@@ -101,6 +110,11 @@ function generateMockFeedback(data: AppraisalData): string {
   let selfAssessmentDetails = ''
   if (data.selfAssessment && data.selfAssessment.length > 0) {
     selfAssessmentDetails = '\n\nEmployee Self-Assessment:\n' + data.selfAssessment
+  }
+
+  let additionalComments = ''
+  if (data.additionalManagerComments && data.additionalManagerComments.trim()) {
+    additionalComments = '\n\nAdditional Manager Comments:\n' + data.additionalManagerComments
   }
 
   const overallScore = data.overallScore
@@ -126,12 +140,12 @@ function generateMockFeedback(data: AppraisalData): string {
   // Generate strengths and areas for focus based on ratings
   const strengths = data.ratings.filter(r => r.score >= 4.0).map(rating => {
     const category = data.template.categories.find(c => c.id === rating.categoryId)
-    return `• Your ${category?.name.toLowerCase()} is truly exceptional - you have a natural talent here that sets you apart`
+    return `• ${pronouns.subject.charAt(0).toUpperCase() + pronouns.subject.slice(1)} ${category?.name.toLowerCase()} is truly exceptional - ${pronouns.subject} has a natural talent here that sets ${pronouns.object} apart`
   }).join('\n')
 
   const focusAreas = data.ratings.filter(r => r.score < 4.0).map(rating => {
     const category = data.template.categories.find(c => c.id === rating.categoryId)
-    return `• ${category?.name} - With some focused effort, you can really excel in this area`
+    return `• ${category?.name} - With some focused effort, ${pronouns.subject} can really excel in this area`
   }).join('\n')
 
   const risks = data.ratings.filter(r => r.score < 3.0).map(rating => {
@@ -139,23 +153,29 @@ function generateMockFeedback(data: AppraisalData): string {
     return `• ${category?.name} needs immediate attention to prevent it from becoming a significant barrier`
   }).join('\n')
 
-  return `${employeeName}, your performance this period has been ${performanceLevel.toLowerCase()}. Here's my assessment organized to help you understand where you shine and where we can focus our efforts together.
+  // Consider additional manager comments in the feedback
+  let additionalContext = ''
+  if (data.additionalManagerComments && data.additionalManagerComments.trim()) {
+    additionalContext = `\n\nAdditional Context: ${data.additionalManagerComments}`
+  }
+
+  return `${employeeName} has demonstrated ${performanceLevel.toLowerCase()} performance this period. Here's the assessment organized to help understand where ${pronouns.subject} shines and where efforts can be focused together.
 
 **Success & Achievements**
-${strengths || `• Your overall ${performanceLevel.toLowerCase()} performance shows strong potential and dedication to your role`}
+${strengths || `${pronouns.subject.charAt(0).toUpperCase() + pronouns.subject.slice(1)} has shown strong potential and dedication to ${pronouns.possessive} role with ${performanceLevel.toLowerCase()} overall performance`}
 
 **Areas for Focus**
-${focusAreas || '• Continue building on your current foundation - there\'s always room for growth'}
+${focusAreas || `${pronouns.subject.charAt(0).toUpperCase() + pronouns.subject.slice(1)} can continue building on ${pronouns.possessive} current foundation - there's always room for growth`}
 
 **Risk Overlay**
-${risks || '• No immediate risks identified - your performance is on a positive trajectory'}
+${risks || `No immediate risks identified - ${pronouns.possessive} performance is on a positive trajectory`}
 
 **Overall Summary**
-Your ${performanceLevel.toLowerCase()} performance demonstrates that you have what it takes to succeed here. I'm excited about your potential and committed to supporting your continued growth. 
+${pronouns.subject.charAt(0).toUpperCase() + pronouns.subject.slice(1)} ${performanceLevel.toLowerCase()} performance demonstrates that ${pronouns.subject} has what it takes to succeed here. The organization is excited about ${pronouns.possessive} potential and committed to supporting ${pronouns.possessive} continued growth. 
 
-Remember, growth is a journey, and I'm here to help you navigate any challenges you face. I believe in your ability to overcome obstacles and achieve your goals.
+Growth is a journey, and the organization is here to help ${pronouns.object} navigate any challenges ${pronouns.subject} faces. There is confidence in ${pronouns.possessive} ability to overcome obstacles and achieve ${pronouns.possessive} goals.
 
-Keep up the great work, ${employeeName}. I'm looking forward to seeing what you accomplish in the coming period.
+${pronouns.subject.charAt(0).toUpperCase() + pronouns.subject.slice(1)} should keep up the great work and continue to focus on areas for improvement. The organization looks forward to seeing what ${pronouns.subject} accomplishes in the coming period.
 
 Best regards,
 ${reviewerName}`
