@@ -8,6 +8,7 @@ A comprehensive Next.js application for generating professional appraisal feedba
 - **Category Descriptions**: Define specific criteria for each evaluation category to generate more contextual feedback
 - **Gender-Specific Feedback**: Include employee gender to generate personalized feedback with appropriate pronouns
 - **Natural Language**: Generate warm, conversational feedback that feels like it comes from a caring mentor
+- **Structured Feedback**: Organized under four clear categories for better clarity and actionability
 - **Slider-based Ratings**: Rate each category on a 0-5 scale with decimal precision
 - **Detailed Comments**: Add specific comments for each evaluation category
 - **Employee Self-Assessment**: Include employee's perspective with self-scoring and detailed input fields
@@ -100,6 +101,36 @@ The system generates feedback that feels warm, personal, and genuinely caring:
 - **Human Connection**: Avoids corporate jargon in favor of natural, relatable language
 
 The feedback is designed to feel like it comes from someone who truly knows and values the employee, focusing on their potential and growth rather than just metrics. It starts directly with observations and feedback, avoiding generic opening statements.
+
+### Structured Feedback Categories
+
+The system organizes feedback under four clear categories for better clarity and actionability:
+
+#### **Success & Achievements**
+- Highlights key accomplishments and strengths
+- Recognizes exceptional performance areas
+- Celebrates what the employee has done exceptionally well
+- Builds confidence and motivation
+
+#### **Areas for Focus**
+- Identifies specific growth opportunities
+- Provides actionable suggestions for improvement
+- Focuses on development areas with potential
+- Offers constructive guidance for advancement
+
+#### **Risk Overlay**
+- Addresses potential challenges and concerns
+- Identifies areas that need immediate attention
+- Helps prevent issues from becoming barriers
+- Ensures proactive problem-solving
+
+#### **Overall Summary**
+- Provides a balanced conclusion
+- Offers encouragement and support
+- Sets clear next steps and expectations
+- Reinforces commitment to employee growth
+
+This structured approach ensures that feedback is comprehensive, actionable, and easy to understand and follow up on.
 
 ### Template Management
 
